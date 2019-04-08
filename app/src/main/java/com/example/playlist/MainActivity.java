@@ -62,6 +62,49 @@ public class MainActivity extends AppCompatActivity {
         canciones = resArray;
     }
 
+    public void repCanciones(int idC){
+        if(isActivePlaying == true){
+            mediaPlayer.stop();
+            mediaPlayer.release();
+        }
+        mediaPlayer = MediaPlayer.create(this, canciones[idC]);
+        mediaPlayer.start();
+        final SeekBar advanceSeekbar = findViewById(R.id.seekC);
+        int duration = mediaPlayer.getDuration();
+        int progress = mediaPlayer.getCurrentPosition();
+        advanceSeekbar.setMax(duration/1000);
+        advanceSeekbar.setProgress(progress/1000);
+
+        advanceSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if(mediaPlayer != null && b){
+                    mediaPlayer.seekTo(i * 1000);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if(mediaPlayer != null){
+                    int mCurrentPosition = mediaPlayer.getCurrentPosition() / 1000;
+                    advanceSeekbar.setProgress(mCurrentPosition);
+                }
+            }}, 0, 1000
+        );
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,6 +161,8 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 TextView textview = findViewById(R.id.txtCancion);
                 textview.setText(elementos.get(i));
+                repCanciones(i);
+
                 //Toast.makeText(getApplicationContext(), elementos.get(i), Toast.LENGTH_SHORT).show();
             }
         });
