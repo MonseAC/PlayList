@@ -3,6 +3,7 @@ package com.example.playlist;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -25,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     MediaPlayer mediaPlayer;
     AudioManager audioManager;
     boolean isActivePlaying = false;
+    int canciones [];
+    //int pos = 0;
 
     public void btnState(View view){
         if (isActivePlaying == false){
@@ -34,22 +38,47 @@ public class MainActivity extends AppCompatActivity {
         else{
             pauseClick(view);
             isActivePlaying = false;
+
         }
     }
     public void pauseClick(View view){
         mediaPlayer.pause();
+        mediaPlayer.release();
     }
 
     public void playClick(View view){
         mediaPlayer.start();
     }
 
+    //Cargar Canciones------------------------------------------------------------------------------
+    public void cargarC() {
+        Field[] fields = R.raw.class.getFields();
+        int[] resArray = new int[fields.length];
+
+        for (int i = 0; i < fields.length; i++) {
+            try {
+                resArray[i] = fields[i].getInt(null);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        canciones = resArray;
+    }
+    //----------------------------------------------------------------------------------------------
+
+
+    //----------------------------------------------------------------------------------------------
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        cargarC();
+        System.out.println("holi");
+        mediaPlayer = MediaPlayer.create(this, canciones[0]);
 
-        mediaPlayer = MediaPlayer.create(this, R.raw.who_is_it);
 
         //Volumen-----------------------------------------------------------------------------------
 
@@ -99,6 +128,10 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 TextView textview = findViewById(R.id.txtCancion);
                 textview.setText(elementos.get(i));
+                mediaPlayer.stop();
+                //mediaPlayer.release();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), canciones[i]);
+                mediaPlayer.start();
                 //Toast.makeText(getApplicationContext(), elementos.get(i), Toast.LENGTH_SHORT).show();
             }
         });
@@ -141,6 +174,5 @@ public class MainActivity extends AppCompatActivity {
             }, 0, 1000
         );
         //------------------------------------------------------------------------------------------
-
     }
 }
