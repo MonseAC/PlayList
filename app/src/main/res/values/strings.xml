@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PlayList</string>
+    <string name="vol">Volumen</string>
 </resources>
