@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     AudioManager audioManager;
     boolean isActivePlaying = false;
     int canciones[];
+    int indice = 0;
 
     public void btnState(View view){
         if (isActivePlaying == false){
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         if(isActivePlaying == true){
             mediaPlayer.stop();
             mediaPlayer.release();
+
         }
         mediaPlayer = MediaPlayer.create(this, canciones[idC]);
         mediaPlayer.start();
@@ -105,13 +107,42 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+    public void adelante(View view){
+        mediaPlayer.stop();
+        indice +=1;
+        System.out.println(indice);
+        if (indice >= canciones.length){
+            indice = 0;
+            repCanciones(indice);
+
+        }
+        else {
+            repCanciones(indice);
+        }
+    }
+
+    public void atras(View view){
+        mediaPlayer.stop();
+        indice -=1;
+        System.out.println(indice);
+        if (indice < 0){
+            indice = 0;
+            repCanciones(indice);
+
+        }
+        else {
+            repCanciones(indice);
+        }
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         cargarC();
-        mediaPlayer = MediaPlayer.create(this, canciones[3]);
+        mediaPlayer = MediaPlayer.create(this, canciones[0]);
 
         //Volumen-----------------------------------------------------------------------------------
 
@@ -161,7 +192,19 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 TextView textview = findViewById(R.id.txtCancion);
                 textview.setText(elementos.get(i));
-                repCanciones(i);
+                if (isActivePlaying == true){
+                    isActivePlaying = false;
+                    mediaPlayer.pause();
+                    mediaPlayer.release();
+                    indice = i;
+                    System.out.println(indice);
+                    repCanciones(i);
+                    textview.setText(elementos.get(indice));
+                }
+                else{
+                    isActivePlaying = true;
+                    repCanciones(i);
+                }
 
                 //Toast.makeText(getApplicationContext(), elementos.get(i), Toast.LENGTH_SHORT).show();
             }
