@@ -19,24 +19,25 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
 
 public class MainActivity extends AppCompatActivity {
 
     MediaPlayer mediaPlayer;
     AudioManager audioManager;
-    boolean isActivePlaying = false;
+    //boolean isActivePlaying = false;
     int canciones[];
     int indice = 0;
 
     public void btnState(View view){
-        if (isActivePlaying == false){
+        if (mediaPlayer.isPlaying() == false){
             playClick(view);
-            isActivePlaying = true;
+            //isActivePlaying = true;
         }
         else{
             pauseClick(view);
-            isActivePlaying = false;
+            //isActivePlaying = false;
         }
     }
     public void pauseClick(View view){
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void playClick(View view){
+
         mediaPlayer.start();
     }
 
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void repCanciones(int idC){
-        if(isActivePlaying == true){
+        if(mediaPlayer.isPlaying()){
             mediaPlayer.stop();
             mediaPlayer.release();
 
@@ -76,39 +78,10 @@ public class MainActivity extends AppCompatActivity {
         int progress = mediaPlayer.getCurrentPosition();
         advanceSeekbar.setMax(duration/1000);
         advanceSeekbar.setProgress(progress/1000);
-
-        advanceSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                if(mediaPlayer != null && b){
-                    mediaPlayer.seekTo(i * 1000);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                if(mediaPlayer != null){
-                    int mCurrentPosition = mediaPlayer.getCurrentPosition() / 1000;
-                    advanceSeekbar.setProgress(mCurrentPosition);
-                }
-            }}, 0, 1000
-        );
     }
 
     public void adelante(View view){
-        mediaPlayer.stop();
+        mediaPlayer.pause();
         indice +=1;
         System.out.println(indice);
         if (indice >= canciones.length){
@@ -119,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         else {
             repCanciones(indice);
         }
+        Toast.makeText(getApplicationContext(),String.valueOf(indice), Toast.LENGTH_SHORT).show();
     }
 
     public void atras(View view){
@@ -133,13 +107,14 @@ public class MainActivity extends AppCompatActivity {
         else {
             repCanciones(indice);
         }
-
+        Toast.makeText(getApplicationContext(),String.valueOf(indice), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        final TextView textview = findViewById(R.id.txtCancion);
 
         cargarC();
         mediaPlayer = MediaPlayer.create(this, canciones[0]);
@@ -181,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
         final ArrayList<String> elementos = new ArrayList<String>(asList("Ben", "Billie Jean", "Dancing Machine", "Remember the Time",
                 "Don't Stop till You Get Enough", "I Just Can´t Stop Loving You", "I Want You Back", "One More Chance", "Pretty Young Thing",
                 "Rock With You", "Stranger in Moscow", "The Girl is Mine", "Wanna be Startin' Sometin'", "Who Is It"));
-
+        textview.setText(elementos.get(0));
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, elementos);
 
         listView.setAdapter(arrayAdapter);
@@ -190,26 +165,30 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                TextView textview = findViewById(R.id.txtCancion);
                 textview.setText(elementos.get(i));
-                if (isActivePlaying == true){
-                    isActivePlaying = false;
+                indice = i;
+                if (mediaPlayer.isPlaying()){
+                    //isActivePlaying = false;
                     mediaPlayer.pause();
-                    mediaPlayer.release();
-                    indice = i;
-                    System.out.println(indice);
+                    //mediaPlayer.release();
                     repCanciones(i);
-                    textview.setText(elementos.get(indice));
+                    //textview.setText(elementos.get(indice));
+
                 }
                 else{
-                    isActivePlaying = true;
-                    repCanciones(i);
-                }
 
+                    //textview.setText(elementos.get(i));
+                    //isActivePlaying = true;
+                    repCanciones(i);
+
+                }
+                Toast.makeText(getApplicationContext(),String.valueOf(indice), Toast.LENGTH_SHORT).show();
                 //Toast.makeText(getApplicationContext(), elementos.get(i), Toast.LENGTH_SHORT).show();
             }
         });
         //------------------------------------------------------------------------------------------
+
+
 
         //Progreso de la cancion--------------------------------------------------------------------
         final SeekBar advanceSeekbar = findViewById(R.id.seekC);
@@ -248,6 +227,5 @@ public class MainActivity extends AppCompatActivity {
             }, 0, 1000
         );
         //------------------------------------------------------------------------------------------
-
     }
 }
