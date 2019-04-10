@@ -15,9 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.reflect.Field;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     AudioManager audioManager;
     int canciones[];
     int indice = 0;
+    int startTime = 0;
     ArrayList<String> elementos = new ArrayList<String>(asList("Ben", "Billie Jean", "Dancing Machine", "Remember the Time",
             "Don't Stop till You Get Enough", "I Just Can´t Stop Loving You", "I Want You Back", "One More Chance", "Pretty Young Thing",
             "Rock With You", "Stranger in Moscow", "The Girl is Mine", "Wanna be Startin' Sometin'", "Who Is It"));
@@ -118,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final TextView textview = findViewById(R.id.txtCancion);
+        final TextView textView2 = findViewById(R.id.tiempo);
 
         cargarC();
         mediaPlayer = MediaPlayer.create(this, canciones[0]);
@@ -215,10 +219,31 @@ public class MainActivity extends AppCompatActivity {
                 if(mediaPlayer != null){
                     int mCurrentPosition = mediaPlayer.getCurrentPosition() / 1000;
                     advanceSeekbar.setProgress(mCurrentPosition);
+                    textView2.setText(String.format("%d:%d",
+                            TimeUnit.MILLISECONDS.toMinutes((long)  mCurrentPosition*1000),
+                            TimeUnit.MILLISECONDS.toSeconds((long)  mCurrentPosition*1000) -
+                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
+                                            toMinutes((long)  mCurrentPosition*1000)))
+                    );
                 }
             }
             }, 0, 1000
         );
         //------------------------------------------------------------------------------------------
+
+        //Temporizador------------------------------------------------------------------------------
+        /*
+        Runnable UpdateSongTime = new Runnable() {
+            @Override
+            public void run() {
+                startTime = mediaPlayer.getCurrentPosition();
+                textView2.setText(String.format("%d:%d",
+                        TimeUnit.MILLISECONDS.toMinutes((long) startTime),
+                        TimeUnit.MILLISECONDS.toMinutes((long) startTime) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) startTime)))
+                );
+            }
+        };
+        */
     }
 }
