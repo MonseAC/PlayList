@@ -26,26 +26,27 @@ public class MainActivity extends AppCompatActivity {
 
     MediaPlayer mediaPlayer;
     AudioManager audioManager;
-    //boolean isActivePlaying = false;
     int canciones[];
     int indice = 0;
+    ArrayList<String> elementos = new ArrayList<String>(asList("Ben", "Billie Jean", "Dancing Machine", "Remember the Time",
+            "Don't Stop till You Get Enough", "I Just Can´t Stop Loving You", "I Want You Back", "One More Chance", "Pretty Young Thing",
+            "Rock With You", "Stranger in Moscow", "The Girl is Mine", "Wanna be Startin' Sometin'", "Who Is It"));
 
     public void btnState(View view){
         if (mediaPlayer.isPlaying() == false){
             playClick(view);
-            //isActivePlaying = true;
         }
         else{
             pauseClick(view);
-            //isActivePlaying = false;
         }
     }
     public void pauseClick(View view){
+        view.setBackgroundResource(R.drawable.play);
         mediaPlayer.pause();
     }
 
     public void playClick(View view){
-
+        view.setBackgroundResource(R.drawable.pause);
         mediaPlayer.start();
     }
 
@@ -69,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
         if(mediaPlayer.isPlaying()){
             mediaPlayer.stop();
             mediaPlayer.release();
-
         }
         mediaPlayer = MediaPlayer.create(this, canciones[idC]);
         mediaPlayer.start();
@@ -88,11 +88,11 @@ public class MainActivity extends AppCompatActivity {
             indice = 0;
             repCanciones(indice);
 
+
         }
         else {
             repCanciones(indice);
         }
-        Toast.makeText(getApplicationContext(),String.valueOf(indice), Toast.LENGTH_SHORT).show();
     }
 
     public void atras(View view){
@@ -107,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
         else {
             repCanciones(indice);
         }
-        Toast.makeText(getApplicationContext(),String.valueOf(indice), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -153,9 +152,6 @@ public class MainActivity extends AppCompatActivity {
 
         //Lista con las canciones-------------------------------------------------------------------
         ListView listView = findViewById(R.id.list_Canciones);
-        final ArrayList<String> elementos = new ArrayList<String>(asList("Ben", "Billie Jean", "Dancing Machine", "Remember the Time",
-                "Don't Stop till You Get Enough", "I Just Can´t Stop Loving You", "I Want You Back", "One More Chance", "Pretty Young Thing",
-                "Rock With You", "Stranger in Moscow", "The Girl is Mine", "Wanna be Startin' Sometin'", "Who Is It"));
         textview.setText(elementos.get(0));
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, elementos);
 
@@ -168,21 +164,14 @@ public class MainActivity extends AppCompatActivity {
                 textview.setText(elementos.get(i));
                 indice = i;
                 if (mediaPlayer.isPlaying()){
-                    //isActivePlaying = false;
                     mediaPlayer.pause();
-                    //mediaPlayer.release();
                     repCanciones(i);
-                    //textview.setText(elementos.get(indice));
 
                 }
                 else{
-
-                    //textview.setText(elementos.get(i));
-                    //isActivePlaying = true;
                     repCanciones(i);
 
                 }
-                Toast.makeText(getApplicationContext(),String.valueOf(indice), Toast.LENGTH_SHORT).show();
                 //Toast.makeText(getApplicationContext(), elementos.get(i), Toast.LENGTH_SHORT).show();
             }
         });
