@@ -93,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
         else {
             repCanciones(indice);
         }
+        TextView textView = findViewById(R.id.txtCancion);
+        textView.setText(elementos.get(indice));
     }
 
     public void atras(View view){
@@ -107,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
         else {
             repCanciones(indice);
         }
+        TextView textView = findViewById(R.id.txtCancion);
+        textView.setText(elementos.get(indice));
     }
 
     @Override
